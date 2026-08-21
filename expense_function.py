@@ -83,3 +83,35 @@ print("7. Filter by Category")
 print("8. Save Data")
 print("9. Load Data")
 print("10. Exit")
+
+
+while True:
+    ch=input("Enter your choice: ")
+    if ch=="1":
+        add_expense()
+    elif ch=="2":
+        view_expenses()
+    elif ch=="3":
+        delete_expense()
+    elif ch=="4":
+        total_spending()
+    elif ch=="5":
+        highest_expense()
+    elif ch=="6":
+        lowest_expense()
+    elif ch=="7":
+        filter_category()
+    elif ch=="8":
+        save_data()
+    elif ch=="9":
+        load_data()
+    elif ch=="10":
+        print("Thanks for using this service")
+        break
+    else:
+        print("Enter a valid choice")
+        
+
+
+
+
