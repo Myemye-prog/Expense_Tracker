@@ -86,7 +86,6 @@ expense.json
      ↓
 Display updated expenses
 
-That's exactly what we wanted.
 
 ✅ What you did correctly
 1. Load existing data
@@ -125,6 +124,7 @@ Correct. This proves that the new expense exists in the updated list.
 🧠 One important improvement
 
 You currently have the display code twice:
+That's exactly what we wanted.
 
 for i in expense:
     print(...)
@@ -588,3 +588,23 @@ Start with only 3 options:
 Once that works, we'll add the remaining options.
 
 Write that part yourself and send it to me.
+
+
+==================================================
+while True
+   │
+   ├── 1 → add_expense()
+   ├── 2 → view_expenses()
+   ├── 3 → delete_expense()
+   ├── 4 → total_spending()
+   ├── 5 → highest_expense()
+   ├── 6 → lowest_expense()
+   ├── 7 → filter_category()
+   ├── 8 → save_data()
+   ├── 9 → load_data()
+   │
+   ├── 10 → print goodbye
+   │        → break
+   │
+   └── invalid → print error
+               → loop again
