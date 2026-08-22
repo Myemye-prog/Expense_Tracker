@@ -51,7 +51,8 @@ def total_spending():
     total = 0
     for i in expense:
         total += i["amount"]
-    print(f"Total spending is {total}")
+    print(f"Total number of excepese: {len(expense)}")
+    print(f"Total spending is: {total}")
     print()
 
 
@@ -59,7 +60,7 @@ def highest_expense():
     if not expense:
         print("No expenses found.")
         return
-    highest = 0
+    highest = expense[0]["amount"]
     for i in expense:
         if i["amount"] > highest:
             highest = i["amount"]
@@ -88,7 +89,7 @@ def filter_category():
     found = False
     for i in expense:
         if i["category"] == search:
-            found = True
+            found = True 
             print("Amount: ",i["amount"])
             print("Category: ",i["category"])
             print("Description: ",i["description"])
@@ -96,6 +97,11 @@ def filter_category():
     if not found:
         print("No expenses found for this category.")
 
+def category_summary():
+    summary={}
+    for i in expense:
+        summary[i["category"]]=i["amount"]
+    print(summary)
 
 def save_data():
     try:
@@ -110,12 +116,15 @@ def load_data():
     try:
         with open("expense.json", "r") as f:
             expense = json.load(f)
+            print("Loaded successfully.")
     except FileNotFoundError:
         print("File not found.")
     except json.JSONDecodeError:
         print("Expense file contains invalid data.")
     except PermissionError:
         print("Permission denied. Unable to load data.")
+
+
 
 print("===== EXPENSE TRACKER =====")
 print("1. Add Expense")
@@ -127,7 +136,8 @@ print("6. Lowest Expense")
 print("7. Filter by Category")
 print("8. Save Data")
 print("9. Load Data")
-print("10. Exit")
+print("10. Filter Category")
+print("11. Exit")
 
 
 while True:
@@ -151,6 +161,8 @@ while True:
     elif ch=="9":
         load_data()
     elif ch=="10":
+        category_summary()
+    elif ch=="11":
         print("Thanks for using this service")
         break
     else:
