@@ -1,0 +1,374 @@
+import json
+from datetime import datetime
+
+# Global expense list
+expense = []
+
+DATE_FORMAT = "%d-%m-%Y"
+
+
+def validate_date(date):
+    """Return True if the date is valid, otherwise False."""
+    try:
+        datetime.strptime(date, DATE_FORMAT)
+        return True
+    except ValueError:
+        return False
+
+
+def add_expense():
+    try:
+        amount = int(input("Enter amount: "))
+
+        if amount <= 0:
+            print("Amount must be greater than 0.")
+            return
+
+        category = input("Enter category: ").strip().title()
+
+        if not category:
+            print("Category cannot be empty.")
+            return
+
+        description = input("Enter description: ").strip().title()
+
+        if not description:
+            print("Description cannot be empty.")
+            return
+
+        date = input("Enter date (DD-MM-YYYY): ").strip()
+
+        if not validate_date(date):
+            print("Invalid date. Please use DD-MM-YYYY format.")
+            return
+
+        expense.append({
+            "amount": amount,
+            "category": category,
+            "description": description,
+            "date": date
+        })
+
+        print("Expense added successfully.")
+
+    except ValueError:
+        print("Please enter a valid amount.")
+
+
+def view_expenses():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    print("\n===== ALL EXPENSES =====")
+
+    for number, item in enumerate(expense, start=1):
+        print(f"\nExpense #{number}")
+        print("Amount:", item.get("amount", 0))
+        print("Category:", item.get("category", "Unknown"))
+        print("Description:", item.get("description", "Unknown"))
+        print("Date:", item.get("date", "Unknown"))
+
+    print()
+
+
+def delete_expense():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    try:
+        number = int(input("Enter expense number to delete: "))
+
+        if number <= 0 or number > len(expense):
+            print("Expense number doesn't exist.")
+            return
+
+        deleted = expense[number - 1]
+
+        print("\nExpense to delete:")
+        print("Amount:", deleted["amount"])
+        print("Category:", deleted["category"])
+        print("Description:", deleted["description"])
+        print("Date:", deleted["date"])
+
+        confirm = input("\nAre you sure? (y/n): ").strip().lower()
+
+        if confirm == "y":
+            expense.pop(number - 1)
+            print("Expense deleted successfully.")
+        else:
+            print("Delete cancelled.")
+
+    except ValueError:
+        print("Please enter a valid expense number.")
+
+
+def edit_expense():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    try:
+        number = int(input("Enter expense number to edit: "))
+
+        if number <= 0 or number > len(expense):
+            print("Expense number doesn't exist.")
+            return
+
+        index = number - 1
+
+        print("\n===== CURRENT EXPENSE =====")
+        print("Amount:", expense[index]["amount"])
+        print("Category:", expense[index]["category"])
+        print("Description:", expense[index]["description"])
+        print("Date:", expense[index]["date"])
+
+        # New amount
+        amount = int(input("\nEnter new amount: "))
+
+        if amount <= 0:
+            print("Amount must be greater than 0.")
+            return
+
+        # New category
+        category = input("Enter new category: ").strip().title()
+
+        if not category:
+            print("Category cannot be empty.")
+            return
+
+        # New description
+        description = input("Enter new description: ").strip().title()
+
+        if not description:
+            print("Description cannot be empty.")
+            return
+
+        # New date
+        date = input("Enter new date (DD-MM-YYYY): ").strip()
+
+        if not validate_date(date):
+            print("Invalid date. Please use DD-MM-YYYY format.")
+            return
+
+        # Update expense
+        expense[index]["amount"] = amount
+        expense[index]["category"] = category
+        expense[index]["description"] = description
+        expense[index]["date"] = date
+
+        print("Expense updated successfully.")
+
+    except ValueError:
+        print("Please enter a valid number.")
+
+
+def total_spending():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    total = sum(item["amount"] for item in expense)
+
+    print("\n===== SPENDING SUMMARY =====")
+    print("Total number of expenses:", len(expense))
+    print("Total spending:", total)
+    print()
+
+
+def highest_expense():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    highest = max(expense, key=lambda item: item["amount"])
+
+    print("\n===== HIGHEST EXPENSE =====")
+    print("Amount:", highest["amount"])
+    print("Category:", highest["category"])
+    print("Description:", highest["description"])
+    print("Date:", highest["date"])
+    print()
+
+
+def lowest_expense():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    lowest = min(expense, key=lambda item: item["amount"])
+
+    print("\n===== LOWEST EXPENSE =====")
+    print("Amount:", lowest["amount"])
+    print("Category:", lowest["category"])
+    print("Description:", lowest["description"])
+    print("Date:", lowest["date"])
+    print()
+
+
+def filter_category():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    search = input("Enter category to search: ").strip().title()
+
+    if not search:
+        print("Input cannot be empty.")
+        return
+
+    found = False
+
+    print(f"\n===== EXPENSES IN {search.upper()} =====")
+
+    for item in expense:
+        if item["category"] == search:
+            found = True
+
+            print("Amount:", item["amount"])
+            print("Category:", item["category"])
+            print("Description:", item["description"])
+            print("Date:", item["date"])
+            print()
+
+    if not found:
+        print("No expenses found for this category.")
+
+
+def category_summary():
+    if not expense:
+        print("No expenses found.")
+        return
+
+    summary = {}
+
+    for item in expense:
+        category = item["category"]
+        amount = item["amount"]
+
+        if category in summary:
+            summary[category] += amount
+        else:
+            summary[category] = amount
+
+    print("\n===== CATEGORY SUMMARY =====")
+
+    for category, amount in summary.items():
+        print(f"{category}: {amount}")
+
+    print()
+
+
+def save_data():
+    try:
+        with open("expense.json", "w") as file:
+            json.dump(expense, file, indent=4)
+
+        print("Data saved successfully.")
+
+    except PermissionError:
+        print("Permission denied. Unable to save data.")
+
+    except OSError:
+        print("An error occurred while saving the data.")
+
+
+def load_data():
+    global expense
+
+    try:
+        with open("expense.json", "r") as file:
+            data = json.load(file)
+
+        if not isinstance(data, list):
+            print("Invalid expense data.")
+            return
+
+        expense = data
+
+        # Clean existing data
+        for item in expense:
+            item["category"] = item.get("category", "Unknown").strip().title()
+            item["description"] = item.get("description", "Unknown").strip().title()
+            item["date"] = item.get("date", "Unknown")
+
+        print("Data loaded successfully.")
+
+    except FileNotFoundError:
+        print("Expense file not found.")
+
+    except json.JSONDecodeError:
+        print("Expense file contains invalid JSON data.")
+
+    except PermissionError:
+        print("Permission denied. Unable to load data.")
+
+    except OSError:
+        print("An error occurred while loading the data.")
+
+
+def display_menu():
+    print("\n===== EXPENSE TRACKER =====")
+    print("1. Add Expense")
+    print("2. View Expenses")
+    print("3. Delete Expense")
+    print("4. Edit Expense")
+    print("5. Total Spending")
+    print("6. Highest Expense")
+    print("7. Lowest Expense")
+    print("8. Filter by Category")
+    print("9. Save Data")
+    print("10. Load Data")
+    print("11. Category Summary")
+    print("12. Exit")
+
+
+# Load existing data when program starts
+load_data()
+
+# Main program
+while True:
+    display_menu()
+
+    choice = input("Enter your choice: ").strip()
+
+    if choice == "1":
+        add_expense()
+
+    elif choice == "2":
+        view_expenses()
+
+    elif choice == "3":
+        delete_expense()
+
+    elif choice == "4":
+        edit_expense()
+
+    elif choice == "5":
+        total_spending()
+
+    elif choice == "6":
+        highest_expense()
+
+    elif choice == "7":
+        lowest_expense()
+
+    elif choice == "8":
+        filter_category()
+
+    elif choice == "9":
+        save_data()
+
+    elif choice == "10":
+        load_data()
+
+    elif choice == "11":
+        category_summary()
+
+    elif choice == "12":
+        print("Thanks for using the Expense Tracker!")
+        break
+
+    else:
+        print("Enter a valid choice.")
