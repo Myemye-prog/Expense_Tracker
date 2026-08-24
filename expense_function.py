@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 # Initialize the global list
 expense = []
@@ -11,12 +12,17 @@ def add_expense():
         if amt > 0:
             ctg = input("Enter category: ").strip().title()
             descp = input("Enter description: ").strip().title()
+            date=input("Enter date (DD-MM-YYYY): ").strip()
 
-            expense.append({
+            if datetime.strptime(date,"%d-%m-%Y"):
+                expense.append({
                 "amount": amt,
                 "category": ctg,
-                "description": descp
+                "description": descp,
+                "date":date
             })
+            else:
+                print("Enter valid date (DD-MM-YYYY)")    
 
             print("Expense added successfully.")
 
@@ -36,6 +42,11 @@ def view_expenses():
         print(number, "Amount:", i["amount"])
         print("Category:", i["category"])
         print("Description:", i["description"])
+        if "date" not in i:
+            i["date"]="Unknown"
+            print("Date:",i["date"])
+        else:
+            print("Date:",i["date"])
         print()
 
 
@@ -59,6 +70,47 @@ def delete_expense():
     except IndexError:
         print("Expense number doesn't exist.")
 
+def edit_expense():
+    try:
+        number=int(input("Enter expense number to edit: "))
+
+        if number<=0:
+            print("Please enter a valid expense to edit.")
+            return
+
+        index=number-1
+        if index>=len(expense):
+            print("Expense number doesn't exist")
+            return
+
+        print("\n Current Expenses: ")
+        print("Amount",expense[index]["amount"])
+        print("Category", expense[index]["category"])
+        print("Description",expense[index]["description"])
+        print("Date",expense[index]["date"])
+
+        print("\n Enter new amount")
+
+        amount=int(input("Enter new amount: "))
+
+        if amount<=0:
+            print("Amount must be greater than 0")
+            return
+
+        category=input("Enter new category").strip().title()
+        description=input("Enter new description").strip().title()
+        date=input("Enter new date (DD-MM-YYYY): ").strip()
+        datetime.strptime(date,"%d-%m-%Y")
+
+        expense[index]["amount"]=amount
+        expense[index]["category"]=category
+        expense[index]["description"]=description
+        expense[index]["date"]=date
+
+        print("Exepnse update successfully.")
+
+    except ValueError:
+        print("Please enter a valid number")
 
 def total_spending():
     if not expense:
@@ -119,6 +171,7 @@ def filter_category():
             print("Amount:", i["amount"])
             print("Category:", i["category"])
             print("Description:", i["description"])
+            print("Date:",i["date"])
             print()
 
     if not found:
@@ -171,6 +224,8 @@ def load_data():
             i["category"] = i["category"].strip().title()
             i["description"] = i["description"].strip().title()
 
+            if "date" not in i:
+                i["date"]="Unknown"
         print("Loaded successfully.")
 
     except FileNotFoundError:
@@ -187,14 +242,15 @@ print("===== EXPENSE TRACKER =====")
 print("1. Add Expense")
 print("2. View Expenses")
 print("3. Delete Expense")
-print("4. Total Spending")
-print("5. Highest Expense")
-print("6. Lowest Expense")
-print("7. Filter by Category")
-print("8. Save Data")
-print("9. Load Data")
-print("10. Category Summary")
-print("11. Exit")
+print("4. Edit Expense")
+print("5. Total Spending")
+print("6. Highest Expense")
+print("7. Lowest Expense")
+print("8. Filter by Category")
+print("9. Save Data")
+print("10. Load Data")
+print("11. Category Summary")
+print("12. Exit")
 
 
 while True:
@@ -211,27 +267,30 @@ while True:
         delete_expense()
 
     elif ch == "4":
-        total_spending()
+        edit_expense()
 
     elif ch == "5":
-        highest_expense()
+        total_spending()
 
     elif ch == "6":
-        lowest_expense()
+        highest_expense()
 
     elif ch == "7":
-        filter_category()
+        lowest_expense()
 
     elif ch == "8":
-        save_data()
+        filter_category()
 
     elif ch == "9":
-        load_data()
+        save_data()
 
     elif ch == "10":
-        category_summary()
+        load_data()
 
     elif ch == "11":
+        category_summary()
+
+    elif ch == "12":
         print("Thanks for using this service.")
         break
 
